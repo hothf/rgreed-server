@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlinx-serialization'
+apply plugin: 'application'
+
+version '0.1.0'
+mainClassName = "de.ka.rgreed.ApplicationKt"
+
+task stage {
+    dependsOn installDist
+}
+
+jar {
+    baseName 'rgreed'
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+sourceSets {
+    main.kotlin.srcDirs = main.java.srcDirs = ['src']
+    test.kotlin.srcDirs = test.java.srcDirs = ['test']
+    main.resources.srcDirs = ['resources']
+    test.resources.srcDirs = ['testresources']
+}
+
+repositories {
+    mavenLocal()
+    jcenter {
+        url "http://jcenter.bintray.com/"
+    }
+    maven { url "https://maven.google.com" }
+    maven { url 'https://kotlin.bintray.com/ktor' }
+    maven { url 'https://kotlin.bintray.com/kotlin-js-wrappers' }
+    maven { url "https://kotlin.bintray.com/kotlinx" }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "io.ktor:ktor-server-jetty:$ktor_version"
+    compile "ch.qos.logback:logback-classic:$logback_version"
+    compile "io.ktor:ktor-server-core:$ktor_version"
+    compile "io.ktor:ktor-jackson:$ktor_version"
+    compile "io.ktor:ktor-client-json:$ktor_version"
+    compile "io.ktor:ktor-client-core:$ktor_version"
+    compile "io.ktor:ktor-auth-jwt:$ktor_version"
+    compile "io.ktor:ktor-network-tls:$ktor_version"
+    compile 'org.jetbrains.exposed:exposed:0.11.2'
+    compile 'org.postgresql:postgresql:42.2.4.jre7'
+    compile 'io.github.microutils:kotlin-logging:1.6.22'
+    compile 'com.zaxxer:HikariCP:2.7.8'
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.9.1"
+    compile "com.h2database:h2:1.4.198"
+    compile "com.google.firebase:firebase-admin:6.8.0"
+    
+    testCompile "io.ktor:ktor-server-tests:$ktor_version"
+    testCompile "io.ktor:ktor-server-test-host:$ktor_version"
+    testCompile "io.ktor:ktor-client-mock:$ktor_version"
+    testCompile "io.ktor:ktor-client-mock-jvm:$ktor_version"
+}
